@@ -1,0 +1,34 @@
+{
+  "name": "paymaster-examples",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:phureewat29/zk-paymaster.git",
+  "author": "Phureewat A <a.phureewat@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "contracts",
+    "frontend"
+  ],
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  },
+  "scripts": {
+    "test:contracts": "yarn workspace contracts test",
+    "ci:tests": "yarn workspace contracts ci:tests",
+    "deploy:contracts": "yarn workspace contracts deploy",
+    "compile:contracts": "yarn workspace contracts compile",
+    "deploy:greeter": "yarn workspace contracts greeter",
+    "deploy:gasless": "yarn workspace contracts gasless",
+    "deploy:allowList": "yarn workspace contracts allowList",
+    "deploy:nftGated": "yarn workspace contracts nftGated",
+    "deploy:fixedToken": "yarn workspace contracts fixedToken",
+    "deploy:timeBased": "yarn workspace contracts timeBased",
+    "deploy:nft": "yarn workspace contracts nft",
+    "deploy:token": "yarn workspace contracts token",
+    "serve:ui": "yarn workspace frontend dev",
+    "start:ui": "yarn workspace frontend start",
+    "build:ui": "yarn workspace frontend build",
+    "format": "prettier --write \"{frontend,contracts}/**/*.{ts,js,jsx,tsx}\""
+  }
+}
