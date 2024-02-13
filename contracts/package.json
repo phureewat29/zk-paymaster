@@ -29,6 +29,7 @@
     "ci:tests": "hardhat test --network zkSyncInMemory --show-stack-traces",
     "deploy": "hardhat deploy-zksync",
     "greeter": "hardhat deploy-zksync --script greeter.ts",
+    "use:greeter": "hardhat deploy-zksync --script use-greeter.ts",
     "gasless": "hardhat deploy-zksync --script gaslessPaymaster.ts",
     "allowList": "hardhat deploy-zksync --script allowListPaymaster.ts",
     "nftGated": "hardhat deploy-zksync --script erc721gatedPaymaster.ts",

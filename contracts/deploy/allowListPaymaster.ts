@@ -17,8 +17,8 @@ if (!PRIVATE_KEY)
 
 export default async function (hre: HardhatRuntimeEnvironment) {
   console.log(`Running deploy script for the AllowlistPaymaster contract...`);
-  // Currently targeting the Sepolia zkSync testnet
-  const network = hre.userConfig.networks?.zkSyncTestnet;
+  // Currently targeting the Sepolia zkSync mainnet
+  const network = hre.userConfig.networks?.zkSyncMainnet;
   const provider = new Provider((network as HttpNetworkUserConfig).url);
 
   // The wallet that will deploy the token and the paymaster

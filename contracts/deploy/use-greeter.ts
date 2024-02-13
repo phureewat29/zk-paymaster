@@ -1,4 +1,4 @@
-import { Provider } from "zksync-web3";
+import { Provider, utils } from "zksync-web3";
 import * as ethers from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -14,8 +14,11 @@ const PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || "";
 if (!PRIVATE_KEY)
   throw "⛔️ Private key not detected! Add it to the .env file!";
 
-// Address of the contract on zksync testnet
-const CONTRACT_ADDRESS = "";
+// Put the address of the deployed paymaster here
+const PAYMASTER_ADDRESS = "0xf51003FdF4C24a2a205c6030AA691808bfc7dA85";
+
+// Address of the greeter contract on zksync
+const CONTRACT_ADDRESS = "0xe9aaA9CD8dE0A5D3245e5F4eFf4befCbc7e19A37";
 
 if (!CONTRACT_ADDRESS) throw "⛔️ Contract address not provided";
 
@@ -25,8 +28,11 @@ export default async function (hre: HardhatRuntimeEnvironment) {
 
   // Initialize the provider.
   // @ts-ignore
-  const provider = new Provider(hre.userConfig.networks?.zkSyncTestnet?.url);
+  const provider = new Provider(hre.userConfig.networks?.zkSyncMainnet?.url);
   const signer = new ethers.Wallet(PRIVATE_KEY, provider);
+
+  let paymasterBalance = await provider.getBalance(PAYMASTER_ADDRESS);
+  console.log(`Paymaster ETH balance is ${paymasterBalance.toString()}`);
 
   // Initialise contract instance
   const contract = new ethers.Contract(
@@ -38,9 +44,25 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   // Read message from contract
   console.log(`The message is ${await contract.greet()}`);
 
-  // send transaction to update the message
-  const newMessage = "Hello people!";
-  const tx = await contract.setGreeting(newMessage);
+  // send transaction to update the message via paymaster
+  const gasPrice = await provider.getGasPrice();
+  const newMessage = "still not gasless : (";
+  const paymasterParams = utils.getPaymasterParams(PAYMASTER_ADDRESS, {
+    type: "General",
+    innerInput: new Uint8Array(), // empty bytes as paymaster does not use innerInput
+  });
+
+  const tx = await contract
+    .connect(signer)
+    .setGreeting(newMessage, {
+      maxPriorityFeePerGas: ethers.BigNumber.from(0),
+      maxFeePerGas: gasPrice,
+      gasLimit: 600000, // hardhcoded
+      customData: {
+        gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+        paymasterParams,
+      },
+    });
 
   console.log(`Transaction to change the message is ${tx.hash}`);
   await tx.wait();
